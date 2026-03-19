@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home — Popcorn Picks</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Popcorn Picks</h1>
+    <nav>
+      <div class="profile-menu">
+        <button id="profileBtn" class="nav-btn">
+          <span id="profileAvatar" class="profile-avatar">👤</span>
+          <span id="profileName">Profile</span>
+          <span class="chevron">▾</span>
+        </button>
+        <div id="profileDropdown" class="dropdown hidden">
+          <button id="editProfileBtn" class="dropdown-item">Edit profile</button>
+          <button id="watchlistBtn" class="dropdown-item">Watchlist</button>
+          <button id="historyBtn" class="dropdown-item">Watch history</button>
+          <button id="logoutBtn" class="dropdown-item">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Top Movies</h2>
+      <p>Explore top movies, search by title, or filter by genre and language.</p>
+    </section>
+
+    <section class="top-line">
+      <span class="top-badge">🏆 Top 10 of the Week</span>
+    </section>
+
+    <div id="top10Movies"></div>
+
+    <div id="status" class="message hidden"></div>
+
+    <div class="input-group">
+      <input id="search" placeholder="Search movies" />
+      <button class="primary" onclick="searchMovie()">Search</button>
+    </div>
+
+    <div class="input-group">
+      <select id="genreFilter"></select>
+      <select id="languageFilter"></select>
+    </div>
+
+    <section class="top-line">
+      <span class="top-badge">Explore Your Movies</span>
+    </section>
+
+    <div id="randomMovies"></div>
+
+    <div class="load-more">
+      <button id="loadMoreBtn" class="primary hidden">Load more movies</button>
+    </div>
+  </main>
+
+  <script src="js/home.js"></script>
+</body>
+</html>

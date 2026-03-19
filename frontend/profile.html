@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile — Popcorn Picks</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Popcorn Picks</h1>
+    <nav>
+      <button onclick="window.location.href='home.html'">Home</button>
+      <button onclick="window.location.href='watchlist.html'">Watchlist</button>
+      <div class="profile-menu">
+        <button id="profileBtn" class="nav-btn">
+          <span id="profileAvatar" class="profile-avatar">👤</span>
+          <span id="profileName">Profile</span>
+          <span class="chevron">▾</span>
+        </button>
+        <div id="profileDropdown" class="dropdown hidden">
+          <button id="editProfileBtn" class="dropdown-item">Edit profile</button>
+          <button id="watchlistNavBtn" class="dropdown-item">Watchlist</button>
+          <button id="historyNavBtn" class="dropdown-item">Watch history</button>
+          <button id="logoutBtn" class="dropdown-item">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Edit Profile</h2>
+      <p>Update your details, change your password, or delete your account.</p>
+    </section>
+
+    <div class="auth-card" id="profileCard">
+      <form id="profileForm">
+        <div class="input-group">
+          <label for="username">Display name</label>
+          <input id="username" type="text" placeholder="Your display name" required />
+        </div>
+
+        <div class="input-group">
+          <label for="email">Email (read only)</label>
+          <input id="email" type="email" readonly />
+        </div>
+
+        <div class="input-group">
+          <button id="saveProfileBtn" type="submit" class="primary">Save profile</button>
+        </div>
+
+        <hr style="border-color: rgba(255,255,255,0.14);" />
+
+        <div class="input-group">
+          <label for="currentPassword">Current password</label>
+          <input id="currentPassword" type="password" placeholder="Enter current password" />
+        </div>
+
+        <div class="input-group">
+          <label for="newPassword">New password</label>
+          <input id="newPassword" type="password" placeholder="Enter new password" />
+        </div>
+
+        <div class="input-group">
+          <label for="confirmPassword">Confirm new password</label>
+          <input id="confirmPassword" type="password" placeholder="Repeat new password" />
+        </div>
+
+        <div class="input-group">
+          <button id="changePasswordBtn" type="button" class="secondary">Change password</button>
+        </div>
+
+        <hr style="border-color: rgba(255,255,255,0.14);" />
+
+        <div class="input-group">
+          <button id="deleteAccountBtn" type="button" class="secondary">Delete account</button>
+        </div>
+
+        <div id="profileMessage" class="message hidden"></div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/profile.js"></script>
+</body>
+</html>

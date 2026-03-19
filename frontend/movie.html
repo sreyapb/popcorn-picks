@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Movie — Popcorn Picks</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Popcorn Picks</h1>
+    <nav>
+      <a class="nav-link" href="home.html">🏠 Home</a>
+      <a class="nav-link" href="watchlist.html">📜 Watchlist</a>
+      <div class="profile-menu">
+        <button id="profileBtn" class="nav-btn">
+          <span id="profileAvatar" class="profile-avatar">👤</span>
+          <span id="profileName">Profile</span>
+          <span class="chevron">▾</span>
+        </button>
+        <div id="profileDropdown" class="dropdown hidden">
+          <button id="editProfileBtn" class="dropdown-item">Edit profile</button>
+        <button id="watchlistNavBtn" class="dropdown-item">Watchlist</button>
+        <button id="historyNavBtn" class="dropdown-item">Watch history</button>
+        <button id="logoutBtn" class="dropdown-item">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Movie Details</h2>
+      <p>Discover more about this film, rate it, and share your thoughts below.</p>
+    </section>
+
+    <div id="movieDetails"></div>
+
+    <div class="input-group">
+      <button class="primary" id="watchlistBtn">Add to watchlist</button>
+      <button class="primary" id="trailerBtn" onclick="openTrailer()">Watch trailer</button>
+    </div>
+
+    <section id="ratingSection">
+      <h3>Ratings</h3>
+      <div id="ratings"></div>
+    </section>
+
+    <section id="watchProvidersSection">
+      <h3>Where to Watch</h3>
+      <div id="watchProviders"></div>
+    </section>
+
+    <section class="review-form">
+      <h2>Share Your Review</h2>
+      <p>Your Name (Optional)</p>
+      <input id="reviewName" placeholder="Name" />
+
+      <div class="rating-row">
+        <span>Rating</span>
+        <div id="starRating" class="star-rating">
+          <span class="star" data-value="1">☆</span>
+          <span class="star" data-value="2">☆</span>
+          <span class="star" data-value="3">☆</span>
+          <span class="star" data-value="4">☆</span>
+          <span class="star" data-value="5">☆</span>
+        </div>
+        <span id="ratingLabel">0/5</span>
+      </div>
+
+      <textarea id="reviewText" placeholder="Write your review..."></textarea>
+      <div class="input-group">
+        <button class="primary" onclick="submitReview()">Submit Review</button>
+      </div>
+    </section>
+
+    <section class="reviews">
+      
+      <div class="input-group">
+        <select id="reviewFilter" onchange="filterReviews()">
+          <option value="all">All sources</option>
+          <option value="tmdb">TMDB</option>
+          <option value="omdb">OMDB</option>
+          <option value="xmdb">XMDB</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+
+      <div id="reviews"></div>
+    </section>
+
+    <section class="similar-movies">
+      <h2>Similar Movies</h2>
+      <div id="similarMovies"></div>
+    </section>
+  </main>
+
+  <script src="js/movie.js"></script>
+</body>
+</html>
