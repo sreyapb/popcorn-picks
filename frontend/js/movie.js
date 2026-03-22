@@ -1,3 +1,5 @@
+const API_BASE = "https://<your-railway-url>" // replace with your Railway backend URL
+
 const params = new URLSearchParams(window.location.search)
 const movieId = params.get("id")
 
@@ -16,7 +18,8 @@ function requireAuth() {
 }
 
 async function fetchJson(url, options = {}) {
-  const res = await fetch(url, options)
+  const finalUrl = url.startsWith("http") ? url : `${API_BASE}${url}`
+  const res = await fetch(finalUrl, options)
   if (!res.ok) {
     const body = await res.text()
     throw new Error(`Request failed: ${res.status} — ${body}`)

@@ -1,8 +1,4 @@
-// Email validation function
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
+const API_BASE = "https://<your-railway-url>" // replace with your Railway backend URL
 
 async function login() {
   const email = document.getElementById("email").value.trim()
@@ -16,12 +12,7 @@ async function login() {
     return
   }
 
-  if (!isValidEmail(email)) {
-    message.textContent = "Please enter a valid email address."
-    return
-  }
-
-  const res = await fetch("http://localhost:3000/api/auth/login", {
+  const res = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })

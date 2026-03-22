@@ -1,3 +1,5 @@
+const API_BASE = "https://<your-railway-url>" // <--- replace with your Railway backend URL
+
 function ensureAuth() {
   const token = localStorage.getItem("token")
   if (!token) {
@@ -6,8 +8,9 @@ function ensureAuth() {
 }
 
 async function fetchJson(url, options = {}) {
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`
   try {
-    const res = await fetch(url, options)
+    const res = await fetch(fullUrl, options)
     if (!res.ok) throw new Error(`Request failed: ${res.status}`)
     return res.json()
   } catch (err) {
