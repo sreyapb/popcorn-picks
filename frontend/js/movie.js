@@ -2,6 +2,9 @@ const params = new URLSearchParams(window.location.search)
 const movieId = params.get("id")
 
 const token = localStorage.getItem("token")
+console.log("🔍 Token loaded:", token ? "✅ Present" : "❌ Missing")
+console.log("🎬 Movie ID from URL:", movieId)
+
 let trailerKey = null
 let tmdbReviews = []
 let omdbData = null
@@ -19,7 +22,8 @@ async function fetchJson(url, options = {}) {
   const res = await fetch(url, options)
   if (!res.ok) {
     const body = await res.text()
-    throw new Error(`Request failed: ${res.status} — ${body}`)
+    console.error(`❌ API Error - ${res.status}:`, body)
+    throw new Error(`API Error ${res.status}: ${body.substring(0, 100)}`)
   }
   return res.json()
 }
@@ -83,65 +87,81 @@ function generateStars(rating) {
 }
 
 async function loadMovie() {
-  currentMovie = await fetchJson(`/api/tmdb/movie/${movieId}`)
-  const movie = currentMovie
+  try {
+    if (!movieId) {
+      document.getElementById("movieDetails").innerHTML = "<p style='color:#ff6b6b; font-size:18px;'>❌ No movie ID provided. Please go back and select a movie.</p>"
+      return
+    }
 
-  const year = movie.release_date ? new Date(movie.release_date).getFullYear() : "—"
-  const genres = movie.genres?.map((g) => g.name).join(", ") || "—"
+    currentMovie = await fetchJson(`/api/tmdb/movie/${movieId}`)
+    const movie = currentMovie
 
-  document.getElementById("movieDetails").innerHTML = `
-    <div class="movie-detail">
-      <div class="movie-detail-left">
-        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" />
+    const year = movie.release_date ? new Date(movie.release_date).getFullYear() : "—"
+    const genres = movie.genres?.map((g) => g.name).join(", ") || "—"
+
+    document.getElementById("movieDetails").innerHTML = `
+      <div class="movie-detail">
+        <div class="movie-detail-left">
+          <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" />
+        </div>
+        <div class="movie-detail-right">
+          <h1>${movie.title}</h1>
+          <div class="movie-meta">
+            <span class="rating">${generateStars(movie.average_rating || movie.vote_average)} ${(movie.average_rating || movie.vote_average)?.toFixed(1) || 'N/A'}</span>
+            <span class="meta-separator">•</span>
+            <span class="year">${year}</span>
+          </div>
+
+          <div class="movie-section">
+            <h2>Overview</h2>
+            <p>${movie.overview || "No description available."}</p>
+          </div>
+
+          <div class="movie-section">
+            <h2>Genres</h2>
+            <p>${genres}</p>
+          </div>
+
+          <div class="movie-section movie-info-row">
+            <div>
+              <h3>Runtime</h3>
+              <p>${movie.runtime ? movie.runtime + " minutes" : "—"}</p>
+            </div>
+            <div>
+              <h3>Budget</h3>
+              <p>${movie.budget ? `$${(movie.budget / 1_000_000).toFixed(2)}M` : "—"}</p>
+            </div>
+            <div>
+              <h3>Revenue</h3>
+              <p>${movie.revenue ? `$${(movie.revenue / 1_000_000).toFixed(2)}M` : "—"}</p>
+            </div>
+          </div>
+
+          <div class="movie-section" id="castCrew">
+            <h2>Cast & Crew</h2>
+            <p>Loading...</p>
+          </div>
+        </div>
       </div>
-      <div class="movie-detail-right">
-        <h1>${movie.title}</h1>
-        <div class="movie-meta">
-          <span class="rating">${generateStars(movie.average_rating || movie.vote_average)} ${(movie.average_rating || movie.vote_average)?.toFixed(1) || 'N/A'}</span>
-          <span class="meta-separator">•</span>
-          <span class="year">${year}</span>
-        </div>
+    `
 
-        <div class="movie-section">
-          <h2>Overview</h2>
-          <p>${movie.overview || "No description available."}</p>
-        </div>
-
-        <div class="movie-section">
-          <h2>Genres</h2>
-          <p>${genres}</p>
-        </div>
-
-        <div class="movie-section movie-info-row">
-          <div>
-            <h3>Runtime</h3>
-            <p>${movie.runtime ? movie.runtime + " minutes" : "—"}</p>
-          </div>
-          <div>
-            <h3>Budget</h3>
-            <p>${movie.budget ? `$${(movie.budget / 1_000_000).toFixed(2)}M` : "—"}</p>
-          </div>
-          <div>
-            <h3>Revenue</h3>
-            <p>${movie.revenue ? `$${(movie.revenue / 1_000_000).toFixed(2)}M` : "—"}</p>
-          </div>
-        </div>
-
-        <div class="movie-section" id="castCrew">
-          <h2>Cast & Crew</h2>
-          <p>Loading...</p>
-        </div>
+    loadRatings(movie)
+    loadTrailer(movie)
+    loadWatchProviders(movie)
+    loadCastCrew(movie)
+    loadReviews(movieId)
+    checkWatchlist(movie)
+    loadSimilarMovies(movieId)
+  } catch (err) {
+    console.error("Error loading movie:", err)
+    document.getElementById("movieDetails").innerHTML = `
+      <div style="padding: 40px; text-align: center; color: #ff6b6b;">
+        <p style="font-size: 24px; margin-bottom: 10px;">❌ Error Loading Movie</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">${err.message}</p>
+        <p style="font-size: 12px; color: #888;">Please check your connection and try refreshing the page.</p>
       </div>
-    </div>
-  `
-
-  loadRatings(movie)
-  loadTrailer(movie)
-  loadWatchProviders(movie)
-  loadCastCrew(movie)
-  loadReviews(movieId)
-  checkWatchlist(movie)
-  loadSimilarMovies(movieId)
+    `
+  }
 }
 
 async function loadTrailer(movie) {
@@ -346,7 +366,7 @@ async function loadSimilarMovies(movieId) {
 
 async function loadReviews() {
   try {
-    const reviews = await fetchJson(`/api/reviews/movie/${movieId}`)
+    const reviews = await fetchJson(`/api/reviews/${movieId}`)
     userReviews = reviews || []
     filterReviews()
   } catch (err) {
@@ -434,14 +454,20 @@ function filterReviews() {
 
 async function checkWatchlist(movie) {
   try {
+    console.log("🔎 Checking watchlist for movie:", movie.id)
+    
     const list = await fetchJson("/api/watchlist", {
       headers: { Authorization: `Bearer ${token}` }
     })
 
+    console.log("📋 User watchlist:", list)
+    
     const match = list.find((m) => m.tmdbId === movie.id)
     inWatchlist = !!match
+    console.log("📍 Movie in watchlist?", inWatchlist)
     updateWatchlistButton()
-  } catch {
+  } catch (err) {
+    console.error("❌ Error checking watchlist:", err)
     inWatchlist = false
     updateWatchlistButton()
   }
@@ -449,44 +475,62 @@ async function checkWatchlist(movie) {
 
 function updateWatchlistButton() {
   const btn = document.getElementById("watchlistBtn")
+  if (!btn) return // Exit if button doesn't exist yet
+  
   btn.textContent = inWatchlist ? "Remove from watchlist" : "Add to watchlist"
-  btn.onclick = inWatchlist ? removeFromWatchlist : addToWatchlist
 }
 
 async function addToWatchlist() {
   try {
     if (!currentMovie) throw new Error("Movie not loaded")
+    if (!token) throw new Error("Not logged in")
 
-    await fetchJson("/api/watchlist/add", {
+    const payload = {
+      tmdbId: Number(currentMovie.id),
+      title: currentMovie.title,
+      poster: currentMovie.poster_path
+    }
+
+    console.log("📤 Sending watchlist request:", {
+      url: "/api/watchlist/add",
+      payload,
+      token: token.substring(0, 20) + "..."
+    })
+
+    const response = await fetchJson("/api/watchlist/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        tmdbId: currentMovie.id,
-        title: currentMovie.title,
-        poster: currentMovie.poster_path
-      })
+      body: JSON.stringify(payload)
     })
 
+    console.log("✅ Watchlist response:", response)
     inWatchlist = true
     updateWatchlistButton()
+    alert("✅ Added to watchlist!")
   } catch (err) {
-    alert("Unable to add to watchlist. Make sure you are logged in.")
+    console.error("❌ Error adding to watchlist:", err)
+    alert("❌ Unable to add to watchlist. " + err.message)
   }
 }
 
 async function removeFromWatchlist() {
   try {
+    console.log("Removing from watchlist, movieId:", movieId)
+    
     await fetchJson(`/api/watchlist/remove/${movieId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })
+    
     inWatchlist = false
     updateWatchlistButton()
+    alert("✅ Removed from watchlist!")
   } catch (err) {
-    alert("Unable to remove from watchlist.")
+    console.error("Error removing from watchlist:", err)
+    alert("❌ Unable to remove from watchlist. " + err.message)
   }
 }
 
@@ -505,10 +549,15 @@ async function submitReview() {
     return
   }
 
-  console.log("Submitting review with token:", token)
+  if (!token) {
+    alert("You must be logged in to submit a review.")
+    return
+  }
+
+  console.log("Submitting review:", { movieId, rating, name, token: token ? "present" : "missing" })
 
   try {
-    const result = await fetchJson("http://localhost:3000/api/reviews/add", {
+    const result = await fetchJson("/api/reviews/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -520,14 +569,15 @@ async function submitReview() {
     console.log("Review submit result:", result)
 
     document.getElementById("reviewText").value = ""
+    document.getElementById("reviewName").value = ""
     selectedRating = 0
     updateStarDisplay()
     updateRatingLabel()
     await loadReviews()
-    alert("Review submitted")
+    alert("✅ Review submitted successfully!")
   } catch (err) {
     console.error("Error submitting review:", err)
-    alert("Unable to submit review. " + err.message)
+    alert("❌ Unable to submit review. " + err.message)
   }
 }
 
@@ -614,7 +664,30 @@ function init() {
 
   updateRatingLabel()
   loadProfile()
-  loadMovie()
+  
+  // Initialize watchlist button listener
+  const watchlistBtn = document.getElementById("watchlistBtn")
+  if (watchlistBtn) {
+    watchlistBtn.addEventListener("click", (e) => {
+      e.preventDefault()
+      if (inWatchlist) {
+        removeFromWatchlist()
+      } else {
+        addToWatchlist()
+      }
+    })
+  }
+  
+  // Load movie with error handling
+  loadMovie().catch(err => {
+    console.error("Fatal error in loadMovie:", err)
+    document.getElementById("movieDetails").innerHTML = `
+      <div style="padding: 40px; text-align: center; color: #ff6b6b;">
+        <p style="font-size: 24px; margin-bottom: 10px;">❌ Critical Error</p>
+        <p style="font-size: 14px;">${err.message}</p>
+      </div>
+    `
+  })
 }
 
 init()
