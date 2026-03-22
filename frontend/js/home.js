@@ -7,7 +7,9 @@ function ensureAuth() {
 
 async function fetchJson(url, options = {}) {
   try {
-    const res = await fetch(url, options)
+    // Prepend API base URL if not already absolute
+    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`
+    const res = await fetch(fullUrl, options)
     if (!res.ok) throw new Error(`Request failed: ${res.status}`)
     return res.json()
   } catch (err) {

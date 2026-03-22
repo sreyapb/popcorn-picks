@@ -19,7 +19,9 @@ function requireAuth() {
 }
 
 async function fetchJson(url, options = {}) {
-  const res = await fetch(url, options)
+  // Prepend API base URL if not already absolute
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`
+  const res = await fetch(fullUrl, options)
   if (!res.ok) {
     const body = await res.text()
     console.error(`❌ API Error - ${res.status}:`, body)
