@@ -1,5 +1,3 @@
-const API_BASE = "https://<your-railway-url>" // replace with your Railway backend URL
-
 async function login() {
   const email = document.getElementById("email").value.trim()
   const password = document.getElementById("password").value
@@ -12,7 +10,7 @@ async function login() {
     return
   }
 
-  const res = await fetch(`${API_BASE}/api/auth/login`, {
+  const res = await fetch("http://localhost:3000/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
