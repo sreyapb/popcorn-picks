@@ -20,7 +20,7 @@ async function fetchJson(url, options = {}) {
 
 async function loadWatchlist() {
   try {
-    const list = await fetchJson("http://localhost:3000/api/watchlist", {
+    const list = await fetchJson(`${API_URL}/api/watchlist`, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -105,7 +105,7 @@ async function toggleWatched(tmdbId) {
 
 async function removeMovie(tmdbId) {
   try {
-    await fetchJson(`http://localhost:3000/api/watchlist/remove/${tmdbId}`, {
+    await fetchJson(`${API_URL}/api/watchlist/remove/${tmdbId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })

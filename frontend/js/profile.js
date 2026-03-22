@@ -46,7 +46,7 @@ async function fetchJson(url, options = {}) {
 
 async function loadProfile() {
   try {
-    const profile = await fetchJson("/api/auth/me", {
+    const profile = await fetchJson(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -72,7 +72,7 @@ async function saveProfile(event) {
   }
 
   try {
-    const data = await fetchJson("/api/auth/me", {
+    const data = await fetchJson(`${API_URL}/api/auth/me`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +107,7 @@ async function changePassword() {
   }
 
   try {
-    await fetchJson("/api/auth/change-password", {
+    await fetchJson(`${API_URL}/api/auth/change-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -134,7 +134,7 @@ async function deleteAccount() {
   if (!confirmed) return
 
   try {
-    await fetchJson("/api/auth/delete", {
+    await fetchJson(`${API_URL}/api/auth/delete`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })

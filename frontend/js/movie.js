@@ -54,7 +54,7 @@ async function loadProfile() {
   if (!token) return
 
   try {
-    const profile = await fetchJson("/api/auth/me", {
+    const profile = await fetchJson(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (profile && profile.username) {
@@ -83,7 +83,7 @@ function generateStars(rating) {
 }
 
 async function loadMovie() {
-  currentMovie = await fetchJson(`/api/tmdb/movie/${movieId}`)
+  currentMovie = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}`)
   const movie = currentMovie
 
   const year = movie.release_date ? new Date(movie.release_date).getFullYear() : "—"
@@ -146,7 +146,7 @@ async function loadMovie() {
 
 async function loadTrailer(movie) {
   try {
-    const data = await fetchJson(`/api/tmdb/movie/${movieId}/videos`)
+    const data = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}/videos`)
     const trailer = data.results.find(
       (v) => v.site === "YouTube" && v.type === "Trailer"
     )
@@ -163,7 +163,7 @@ async function loadTrailer(movie) {
 
 async function loadWatchProviders(movie) {
   try {
-    const data = await fetchJson(`/api/tmdb/movie/${movieId}/watch/providers`)
+    const data = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}/watch/providers`)
     const providers = data.results?.US || {} // Assuming US region, can be made configurable
 
     const flatrate = providers.flatrate || []
@@ -218,7 +218,7 @@ async function loadRatings(movie) {
 
   // TMDB reviews
   try {
-    const reviewsData = await fetchJson(`/api/tmdb/movie/${movieId}/reviews`)
+    const reviewsData = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}/reviews`)
     tmdbReviews = reviewsData.results || []
   } catch (err) {
     tmdbReviews = []
@@ -260,7 +260,7 @@ async function loadRatings(movie) {
 
 async function loadCastCrew(movie) {
   try {
-    const data = await fetchJson(`/api/tmdb/movie/${movieId}/credits`)
+    const data = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}/credits`)
     const cast = data.cast?.slice(0, 10) || []
     const crew = data.crew?.filter(c => c.job === 'Director' || c.job === 'Writer') || []
 
@@ -291,7 +291,7 @@ async function loadCastCrew(movie) {
 
 async function loadSimilarMovies(movieId) {
   try {
-    const data = await fetchJson(`/api/tmdb/movie/${movieId}/similar`)
+    const data = await fetchJson(`${API_URL}/api/tmdb/movie/${movieId}/similar`)
     console.log('Similar movies data:', data)
 
     const container = document.getElementById("similarMovies")
@@ -309,7 +309,7 @@ async function loadSimilarMovies(movieId) {
     let similar = (languageMatches.length ? languageMatches : []).slice(0, 10)
 
     if (!similar.length && currentLang) {
-      const discoverData = await fetchJson(`/api/tmdb/discover?with_original_language=${currentLang}&sort_by=popularity.desc`)
+      const discoverData = await fetchJson(`${API_URL}/api/tmdb/discover?with_original_language=${currentLang}&sort_by=popularity.desc`)
       similar = (discoverData?.results || []).slice(0, 10)
     }
 
@@ -346,7 +346,7 @@ async function loadSimilarMovies(movieId) {
 
 async function loadReviews() {
   try {
-    const reviews = await fetchJson(`/api/reviews/${movieId}`)
+    const reviews = await fetchJson(`${API_URL}/api/reviews/${movieId}`)
     userReviews = reviews || []
     filterReviews()
   } catch (err) {
@@ -434,7 +434,7 @@ function filterReviews() {
 
 async function checkWatchlist(movie) {
   try {
-    const list = await fetchJson("/api/watchlist", {
+    const list = await fetchJson(`${API_URL}/api/watchlist`, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -457,7 +457,7 @@ async function addToWatchlist() {
   try {
     if (!currentMovie) throw new Error("Movie not loaded")
 
-    await fetchJson("/api/watchlist/add", {
+    await fetchJson(`${API_URL}/api/watchlist/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -479,7 +479,7 @@ async function addToWatchlist() {
 
 async function removeFromWatchlist() {
   try {
-    await fetchJson(`/api/watchlist/remove/${movieId}`, {
+    await fetchJson(`${API_URL}/api/watchlist/remove/${movieId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -508,7 +508,7 @@ async function submitReview() {
   console.log("Submitting review with token:", token)
 
   try {
-    const result = await fetchJson("http://localhost:3000/api/reviews/add", {
+    const result = await fetchJson(`${API_URL}/api/reviews/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
