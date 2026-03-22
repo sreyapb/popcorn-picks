@@ -170,7 +170,7 @@ const FALLBACK_MOVIES = [
 
 async function loadTop10Trending() {
   clearStatus()
-  const res = await fetchJson(`${API_URL}/api/tmdb/trending?page=1`)
+  const res = await fetchJson("/api/tmdb/trending?page=1")
   if (!res || !res.results) {
     showStatus("Unable to fetch Top 10. Showing fallback movies.")
     renderGrid("top10Movies", FALLBACK_MOVIES, {limit: 10, random: false})
@@ -184,7 +184,7 @@ async function loadRandomMovies() {
   clearStatus()
 
   const page = Math.floor(Math.random() * 5) + 1
-  const res = await fetchJson(`${API_URL}/api/tmdb/trending?page=${page}`)
+  const res = await fetchJson(`/api/tmdb/trending?page=${page}`)
 
   if (!res || !res.results) {
     showStatus("Unable to fetch random movies. Showing fallback movies.")
@@ -216,7 +216,7 @@ async function searchMovie() {
   if (language) params.set("with_original_language", language)
   params.set("page", "1")
 
-  const url = query ? `${API_URL}/api/tmdb/search` : `${API_URL}/api/tmdb/discover`
+  const url = query ? "/api/tmdb/search" : "/api/tmdb/discover"
   const res = await fetchJson(`${url}?${params}`)
 
   if (!res || !res.results) {
@@ -275,7 +275,7 @@ async function loadProfile() {
   const token = localStorage.getItem("token")
   if (!token) return
 
-  const profile = await fetchJson(`${API_URL}/api/auth/me`, {
+  const profile = await fetchJson("/api/auth/me", {
     headers: { Authorization: `Bearer ${token}` }
   })
   if (profile && profile.username) {
